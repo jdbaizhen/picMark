@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>登录页</title>
+		<link href='http://cdn.webfont.youziku.com/webfonts/nomal/109611/46467/59eeb56cf629d806a0748a19.css' rel='stylesheet' type='text/css' />
+		<style>
+			body{
+				background-image: url(public/background.jpg) ;
+				background-size: 100%;
+				background-repeat-y: no-repeat;
+				font-family:'CDMyingbitdf19df9971ac2b';
+				
+			}
+			.login{
+				display: none;
+				position: absolute;
+				top: 33%;
+				left: 38%;
+				width: 24%;
+				height: 34%;
+				margin: -50px -100px;
+				padding: 50px 100px;
+				min-width: 480px;
+				min-height: 340px;
+				background: rgba(0,0,0,.4);
+				text-align: center;
+			}
+			
+			.login>h1{
+				font-size: 44px;
+				color: lightskyblue;
+				margin-bottom: 50px;
+			}
+			input{
+				color: #fff;
+				width: 380px;
+				height: 25px;
+				padding: 3px 8px;
+				margin-bottom: 25px;
+				border-radius: 3px;
+				background: rgba(0,0,0,0.1);
+			}
+			input:focus{
+				border: 2px solid #0f0;
+			}
+			.login button{
+				color: #fff;
+				margin-top: 30px;
+				width: 200px;
+				height: 35px;
+				padding: 5px;
+				border-radius: 5px;
+				background: rgba(0,0,0,0.2);
+				cursor: pointer;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="login">
+			<h1>登录</h1>
+			<div>
+				<label for="admin"></label>
+				<input type="text" name="admin" id="admin" placeholder="用户名" />
+			</div>
+			<div>
+				<label for="pwd"></label>
+				<input type="password" name="pwd" id="pwd" placeholder="密码" />
+			</div>
+			<div>
+				<label for="go"></label>
+				<button type="button" name="go" id="go" value="G o"> G o</button>
+			</div>
+			
+		</div>
+		
+		<script src="https://cdn.bootcss.com/jquery/3.0.0-beta1/jquery.min.js"></script>
+		<script>
+			$(document).ready(function(){
+				//动态载入登录窗口
+				setTimeout(function(){
+					$('.login').fadeIn(1000);					
+				},500)
+				
+				//登录
+				$('#go').click(function(){
+					login();
+				})
+				
+				$('.login').bind('keydown',function(event){
+					if(event.keyCode == '13'){
+						login();
+					}
+				})
+				
+				function login(){
+					var admin = $('#admin').val(),
+						pwd = $('#pwd').val();
+					if(admin==''||pwd==''){
+						alert('用户名/密码不能为空');
+					}else if(admin!==''&&pwd!==''){
+						$.post('/login',{
+							admin : admin,
+							pwd : pwd
+						},function(data){
+							if(data.result){
+								window.location.href='/managepage.html';
+							}else{
+								alert("用户名或密码错误");
+							}
+						})
+					}
+				}
+				
+				
+	            //自动居中对话框
+	            function autoCenter(el){
+	                var bodyW = $(window).width();
+	                var bodyH = $(window).height();
+	                var elW = el.width();
+	                var elH = el.height();
+	                $('.login').css({"left":(bodyW-elW)/2 + 'px',"top":(bodyH-elH)/2 + 'px'});        
+	            };
+	            	           
+	            //窗口大小改变时，对话框始终居中
+	            window.onresize = function(){
+	                autoCenter($('.login'));
+	            };
+        });
+		</script>
+	</body>
+</html>

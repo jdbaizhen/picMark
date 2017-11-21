@@ -1,0 +1,166 @@
+		body{
+			margin: 0px;
+			padding: 0px;
+		}
+
+		.HolyGrail {
+		  display: flex;
+		  min-height: 100vh;
+		  flex-direction: column;
+		}
+		header .nav{
+			display : inline-block;
+			width : 120px;
+			text-align : center;
+			line-height : 60px;
+			float : right;
+			cursor : pointer;
+		}
+		header .nav:hover{
+			background : lightseagreen;
+		}
+		.HolyGrail-body {
+		  display: flex;
+		  max-height:89vh;
+		  flex: 1;
+		}
+		.HolyGrail-container{
+			display: flex;
+			position: relative;
+			flex: 1;
+			flex-direction: column;
+		}
+		.HolyGrail-main{
+			display: flex;
+			height: 100vh;
+			flex: 1;
+			
+		}
+		.HolyGrail-content {
+			overflow: scroll;
+    		position: absolute;
+    		top: 50px;
+			bottom: 150px;
+			width: 100%;
+		  	flex: 1;
+		}
+		
+		.HolyGrail-ads {
+			height: 89vh;
+			 overflow: scroll;
+			 flex: 0 0 30em;
+		}
+		.info{
+			display: flex;
+			align-items: flex-end;
+			min-height: 20vh;
+		}
+		.top{
+			position : relative;
+			flex: 1;
+			height: 60px;
+			line-height: 60px;
+			color: #fff;
+			background : rgb(21,197,210);
+			padding : 0px 20px;
+		}
+		.top>img{
+			position : absolute;
+			top : 8px;
+			left : 20px;
+			float : left;
+		}
+		.down{
+			flex: 1;
+			height: 5vh;
+			background: lightseagreen;
+			text-align: center;
+			line-height: 5vh;
+			color: #fff;
+		}
+		.btns{
+			height: 50px;
+			line-height: 50px;
+		}
+		.prev{
+			position: absolute;
+			left: 20px;
+			top: 7px;
+		}
+		.next{
+			position: absolute;
+			left: 100px;
+			top: 7px;
+		}
+		.complete{
+			position: absolute;
+			right: 150px;
+			top: 7px;
+		}
+		.markState{
+			position: absolute;
+			width: 100px;
+			height: 34px;
+			right: 20px;
+			top: 7px;
+		}
+		.progress{
+			position: absolute;
+			left: 10%;
+			width: 80%;
+			top: 15px;
+		}
+		
+		.labels-infos{
+			width: 100%;
+			height: 30px;
+			text-align: center;
+			padding: 0px;
+			margin: 0px;
+			
+		}
+		.labels-info{
+			float: left;
+			width: 33.3%;
+			line-height: 30px;
+			list-style: none;
+			cursor: pointer;
+			background: #efefef;
+		}
+		.label-middle{
+			border-left: 1px solid black;
+			border-right: 1px solid black;
+		}
+		select{
+			width: 50%;
+			padding: 3px;
+			line-height: 18px;
+			border-radius: 3px;
+		}
+		input[type="text"]{
+			width: 50%;
+			padding: 0px 5px;
+			border-radius: 3px;
+			margin-bottom: 0px;
+		}
+		input[type="submit"]{
+			margin-right: 5%;
+			width: 22%;
+		}
+		input[type="reset"]{
+			width: 22%;
+		}
+		label{
+			margin-bottom: 0px !important;
+			margin-right: 5px !important;
+			font-weight: 300 !important;		
+		}
+		label>input{
+			line-height: 20px !important;
+		}
+		.table-hover td{
+			text-align: center !important;
+		}
+		.formhead{
+			background: #fff;
+		}

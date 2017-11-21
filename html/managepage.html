@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="Pragma" content="no-cache"/>
+        <meta http-equiv="Cache-Control" content="no-cache"/>
+        <meta http-equiv="Expires" content="0"/>
+		<title>userslist</title>
+		<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+		<link rel="stylesheet" href="public/stylesheets/manger.css" />
+		<script src="https://cdn.bootcss.com/jquery/3.0.0-beta1/jquery.min.js"></script>
+		
+		<link rel="icon" href="public/favicon.ico" type="image/x-icon"/>
+		<link rel="shortcut icon" href="public/favicon.ico" type="image/x-icon"/>
+		<link href="public/_doc/common.css" type="text/css" rel="stylesheet"/>
+		<link href="public/_doc/prettify/prettify.css" type="text/css" rel="stylesheet"/>
+		
+		<script type="text/javascript" src="public/lhgcalendar.min.js"></script>
+		<script type="text/javascript" src="public/demo.js"></script>
+		<script src="public/javascripts/managepage.js"></script>
+	</head>
+	<body>
+		<div id="app">
+		<nav class="navbar navbar-default">
+			  <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+				<img src="public/img/logo2.png" style="height=35px"/>
+				<span class="glyphicon glyphicon-th-list"></span> 
+				<div class="pull-right" style="margin-left:66px;">
+					<span class="glyphicon glyphicon-user">{{User}}</span> 
+					<span class="glyphicon glyphicon-off" @click="logout">退出</span> 
+				</div>
+				<ul class="pull-right">
+					<li class="pull-right @click="navStatus=3" :class="{'navStatus' : navStatus==3}">图片库
+						
+					</li>
+					<li class="pull-right" @click="navStatus=2" :class="{'navStatus' : navStatus==2}">日志管理
+						<ul class="navtwo">
+							<li class="" ><a >操作日志</a></li>
+							<li class="" @click="current = 5"><a  >系统日志</a></li>
+							
+						</ul>
+					</li>
+					<li class="pull-right" onclick="window.location.href='/index.html'">标注</li>
+					<li class="pull-right" @click="taskPage(2)" :class="{'navStatus' : navStatus==1}">任务管理
+						<ul class="navtwo">
+							<li class="" v-on:click.stop.prevent="taskPage(2)"><a >列表</a></li>
+							<li class="" v-on:click.stop.prevent="verify(10)"><a  >审核</a></li>
+							<li class="" v-on:click.stop.prevent="current = 3"><a  >导出</a></li>
+						</ul>
+					</li>
+					<li class="pull-right" @click="adminPage(0)" :class="{'navStatus' : navStatus==0}">用户管理
+						<ul class="navtwo">
+							<li class="" v-on:click.stop.prevent="adminPage(0)"><a>列表</a></li>
+							<li class="" v-on:click.stop.prevent="rolePage(1,1)"><a>角色</a></li>
+						</ul>
+					</li>
+				</ul>
+			  </div>
+			  
+			  
+		</nav>
+		
+		<div class="left col-sm-2 col-md-2" hidden>
+			<ul class="sidenav">
+				<li class="list-group-item-one">
+					<p @click="navToggle('one')"><span class="glyphicon glyphicon-triangle-right"></span><span>用户管理</span></p>
+					<ul class="list-item-children list-item-children-one" hidden> 
+						<li class="" @click="adminPage(0)"><span class="glyphicon glyphicon-menu-right"></span><a id="userlist">列表</a></li>
+						<li class="" @click="rolePage(1,1)"><span class="glyphicon glyphicon-menu-right"></span><a id="authority">角色</a></li>
+					</ul>
+				</li>
+				<li class="list-group-item-two">
+					<p @click="navToggle('two')"><span class="glyphicon glyphicon-triangle-right"></span><span>任务管理</span></p>
+					<ul class="list-item-children list-item-children-two" hidden> 
+						<li class="" @click="taskPage(2)"><span class="glyphicon glyphicon-menu-right"></span><a id="taskList" >列表</a></li>
+						<li class="" @click="verify(10)"><span class="glyphicon glyphicon-menu-right"></span><a id="verifyList" >审核</a></li>
+						<li class="" @click="current = 3"><span class="glyphicon glyphicon-menu-right"></span><a id="taskOut" >导出</a></li>
+					</ul>
+				</li>
+				<li class="list-group-item-three">
+					<p @click="navToggle('three')"><span class="glyphicon glyphicon-triangle-right"></span><span>标注</span></p>
+					<ul class="list-item-children list-item-children-three" hidden> 
+						<li class=""><span class="glyphicon glyphicon-menu-right"></span><a id="" onclick="window.location.href='/index.html'">标注</a></li>
+					</ul>
+				</li>
+				<li class="list-group-item-four">
+					<p @click="navToggle('four')"><span class="glyphicon glyphicon-triangle-right"></span><span>日志管理</span></p>
+					<ul class="list-item-children list-item-children-four" hidden> 
+						<li class="" @click=""><span class="glyphicon glyphicon-menu-right"></span><a id="infomessage">操作日志</a></li>
+						<li class="" @click="current = 5"><span class="glyphicon glyphicon-menu-right"></span><a id="infomessage" href="#">系统日志</a></li>
+					</ul>
+				</li>
+				<li class="list-group-item-five">
+					<p @click="navToggle('five')"><span class="glyphicon glyphicon-triangle-right"></span><span>图片库</span></p>
+					<ul class="list-item-children list-item-children-five" hidden> 
+						<li class="" @click="current = 6"><span class="glyphicon glyphicon-menu-right"></span><a id="userlist">导入</a></li>
+						<li class="" @click="current = 7"><span class="glyphicon glyphicon-menu-right"></span><a id="authority">统计</a></li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+		
+		
+		<!--列表-->
+		<div class="coverUser">
+			<div class="zhuce" >
+				<h2>注册账户</h2>
+				<div class="form-group">
+					<input type="text" class="form-control username" v-model="registerUsername" name="username" placeholder="请输入QQ号">
+				</div>
+				<div class="form-group">
+					<input type="text" class="form-control name" v-model="registerName" name="name" placeholder="请输入姓名">
+				</div>
+				<div class="form-group">
+					<input type="password" class="form-control userpassword" v-model="registerPassword" name="userpassword" placeholder="请输入密码">
+				</div>
+				<div class="form-group">
+					<input type="password" class="form-control userpasswords" name="userpasswords" placeholder="确认密码">
+				</div>
+				<div class="form-group">
+					<input type="tel" class="form-control usertel" name="usertel" v-model="registerTelephone" placeholder="请输入联系电话">
+				</div>
+				
+				<button class="btn btn-success" id="register" @click="registerAdmin">注册</button>
+				<button class="btn btn-success cancle-cover" >取消</button>
+			</div>	
+		</div>
+		
+		<!--添加角色-->
+		<div class="addrole" >
+			<div class="roles" >
+				<h2>添加角色</h2>
+				<div class="form-group">
+					<input type="text" class="form-control" v-model="newRole" name="newRole" placeholder="请输入角色名">
+				</div>
+				<button class="btn btn-success" @click="addRoles">添加</button>
+				<button class="btn btn-success cancle-role" >取消</button>
+			</div>	
+		</div>
+		
+		<!--任务管理-->
+		<div class="coverTask">
+			<div class="fabu">
+				<h2>添加任务</h2>
+				<div class="form-group">
+					<input type="text" class="form-control taskname" name="name" v-model="taskName" placeholder="任务名称"/>
+				</div>
+				<div class="form-group">
+					<!--<input type="text" class="form-control taskpicnum" name="taskpicnum" placeholder="标记数量"/>-->
+					<input type="text" class="form-control taskname" name="count" v-model="count" placeholder="标注数量"/>
+				</div>
+				<div class="form-group">
+				<select class="form-control taskperosn" name="uid" v-model="uid" id="uid">
+				</select>
+				</div>
+				
+				<button class="btn btn-success" id="taskpublish" @click="publishTask">发布</button>
+				<button class="btn btn-success" id="taskcancle">取消</button>
+			</div>	
+		</div>
+		
+		<!--图片放大-->
+		<div class="showPicture">
+			<div class="picture">
+					<img src="" id="picture" style="width:60%">
+			</div>	
+			<button class="btn btn-success" id="picturecancle">x</button>
+		</div>
+		
+		
+		<div class="content col-md-12">
+		
+		<div class="right col-sm-12 col-md-12 pull-right" v-show="current==0">
+			<div class="right-header">
+				<ol class="breadcrumb">
+				  <li>用户管理</li>
+				  <li>列表</li>
+				  <li>搜索</li>
+				</ol>
+			</div>
+			<div class="right-top">
+				<form class="navbar-form right-top-form" id="userForm" onsubmit="return false">
+				    <div class="form-group">
+				    	<label>QQ号：</label>
+				    	<input type="text" class="form-control searchUsername inputsearch"  name="username" placeholder="">
+				    </div>
+				    <div class="form-group">
+				    	<label>姓名：</label>
+				    	<input type="text" class="form-control searchUseraccount inputsearch"  name="name" placeholder="">
+				    </div>
+				    <div class="form-group">
+				    	<label>起始时间：</label>
+						<pre class="prettyprint" id="beginTime" hidden>
+							$.calendar({ format:'yyyy-MM-dd HH:mm:ss' });
+						</pre>					
+				    	<input type="text" class="form-control searchUserstartime inputsearch runcode"  name="beginTime" placeholder="">
+				    </div>
+				     <div class="form-group">
+				    	<label>终止时间：</label>
+						<pre class="prettyprint" id="endTime" hidden>
+							$.calendar({ format:'yyyy-MM-dd HH:mm:ss' });
+						</pre>
+				    	<input type="text" class="form-control searchUserendtime inputsearch runcode"  name="endTime" placeholder="">
+				    </div>
+				   <button class="btn btn-info " id="searchUser" @click="adminPage(0)"><span class="glyphicon glyphicon-search"></span></button>
+			    </form>
+			</div>
+			<div class="right-header">
+				<ol class="breadcrumb">
+				  <li>用户列表</li>
+				</ol>
+			</div>
+			<div class="right-bottom">
+				
+				<button class="btn btn-success" id="add-admin">添加用户</button>
+
+				<div class="table-responsive">
+					<table class="table table-bordered table-striped tableUser">
+						<thead>
+							<tr style="font-weight: bold;">
+								<td>序号</td>
+								<td>QQ号</td>
+								<td>姓名</td>
+								<td>联系方式</td>
+								<td>更新时间</td>
+								<td>操作</td>
+							</tr>
+						</thead>	
+						<tbody>
+							<tr v-for="(item,index) in tableUser">
+								<td>{{index+(cur-1)*10+1}}</td>
+								<td>{{item.username}}</td>
+								<td>{{item.name}}</td>
+								<td>{{item.telephone}}</td>
+								<td>{{item.update_time}}</td>
+								<td>
+									<a style="padding:0px" @click="adminFixed(item.id)">修改    </a><a class=""  @click="adminDel(item.id)">删除    </a>
+								</td>
+							</tr>
+						</tbody>
+					</table>						
+				</div>
+				
+				<div class="page-bar">
+				    <ul>
+				        <li v-if="cur>1"><a v-on:click="cur--,pageClick()">上一页</a></li>
+				        <li v-if="cur==1"><a class="banclick">上一页</a></li>
+				        <li v-for="index in indexs(cur,all)"  v-bind:class="{ 'active': cur == index}">
+				            <a v-on:click="btnClick(index,0)">{{ index }}</a>
+				        </li>
+				        <li v-if="cur!=all"><a v-on:click="cur++,pageClick()">下一页</a></li>
+				        <li v-if="cur == all"><a class="banclick">下一页</a></li>
+				        <li><a>共<i>{{all}}</i>页</a></li>
+				    </ul>
+				</div>
+				
+			</div>
+		</div>
+		
+		<!--修改用户-->
+		<div class="right col-sm-12 col-md-12 pull-right" v-show="current==11" >
+			<div class="right-header">
+				<ol class="breadcrumb">
+				  <li>用户管理</li>
+				  <li>列表</li>
+				  <li>修改用户信息</li>
+				</ol>
+			</div>
+			<div class="col-md-2"></div>
+			<div class="adminAccount col-md-4">
+				<h2>基本信息</h2>
+				<div class="form-group">
+					<label>用户QQ：</label>
+					<input type="text" class="form-control username" v-model="fixedUsername" name="username" placeholder="请输入QQ号">
+				</div>
+				<div class="form-group">
+					<label>用户姓名：</label>
+					<input type="text" class="form-control name" v-model="fixedName" name="name" placeholder="请输入姓名">
+				</div>
+				<div class="form-group">
+					<label>用户密码：</label>
+					<input type="password" class="form-control userpassword" v-model="fixedPassword" name="userpassword" placeholder="请输入密码">
+				</div>
+				<div class="form-group">
+					<label>用户电话：</label>
+					<input type="tel" class="form-control usertel" name="usertel" v-model="fixedTelephone" placeholder="请输入联系电话">
+				</div>
+				<input class="form-control" style="display:none;" name="" v-model="fixedTime" />
+				<!--<button class="btn btn-success" id="register" @click="fixedUser">确认修改</button>-->
+			</div>	
+			<div class="adminPart col-md-4">
+				<h2>修改角色</h2>
+				<div>
+					<div v-for="item in group" class="adminParts">
+						<input type="checkbox" :value="item.id" :name="item.id" class="groups"/>
+						<span>{{item.name}}</span>
+					</div>
+				</div>
+				<button class="btn btn-success" @click="adminConfirm">确认修改</button>
+			</div>
+			<div class="col-md-2"></div>
+		</div>
+		
+		<!--角色-->
+		<div class="right col-sm-12 col-md-12 pull-right" v-show="current==1" >
+			<div class="right-header">
+				<ol class="breadcrumb">
+				  <li>用户管理</li>
+				  <li>角色</li>
+				  <li>搜索</li>
+				</ol>
+			</div>
+			<div class="right-top">
+				<form class="navbar-form right-top-form">
+				    <div class="form-group">
+				    	<label>用户名：</label>
+				    	<input type="text" class="form-control authorName" v-model="authorName" name="authorName" placeholder=""/>
+				    </div>
+				    
+				   <button class="btn btn-info" v-on:click.stop.prevent="rolePage(1,1)"><span class="glyphicon glyphicon-search"></span></button>
+			    </form>
+			</div>
+			<div class="right-header">
+				<ol class="breadcrumb">
+				  <li>角色列表</li>
+				</ol>
+			</div>
+			<div class="right-bottom">
+				
+				<button class="btn btn-success" id="add-role">添加角色</button>
+				<div class="table-responsive">
+					<table class="table table-bordered table-striped">
+						<thead>
+							<tr style="font-weight: bold;">
+								<td>序号</td>
+								<td>用户名</td>
+								<td>操作</td>
+							</tr>
+						</thead>	
+						<tbody>
+							<tr v-for="(item,index) in tableRole">
+								<td>{{index+1+(roleCur-1)*10}}</td>
+								<td>{{item.name}}</td>
+								<td>
+									<a style="padding:0px" @click="roleChange(item.id)">修改    </a><a class=""  @click="roleDel(item.id)">删除    </a>
+								</td>
+							</tr>
+						</tbody>
+					</table>						
+				</div>
+				<div class="page-bar">
+				    <ul>
+				        <li v-if="roleCur>1"><a v-on:click="roleCur--,rolePageClick()">上一页</a></li>
+				        <li v-if="roleCur==1"><a class="banclick">上一页</a></li>
+				        <li v-for="index in indexs(roleCur,roleAll)"  v-bind:class="{ 'active': roleCur == index}">
+				            <a v-on:click="roleBtnClick(index,1)">{{ index }}</a>
+				        </li>
+				        <li v-if="roleCur!=roleAll"><a v-on:click="roleCur++,rolePageClick()">下一页</a></li>
+				        <li v-if="roleCur == roleAll"><a class="banclick">下一页</a></li>
+				        <li><a>共<i>{{roleAll}}</i>页</a></li>
+				    </ul>
+				</div>	
+				
+				
+			</div>
+		</div>
+
+		
+
+		<!--修改权限-->
+		<div class="right col-sm-12 col-md-12 pull-right" v-show="current==12" >
+			<div class="right-header">
+				<ol class="breadcrumb">
+				  <li>用户管理</li>
+				  <li>角色</li>
+				  <li>修改角色信息</li>
+				</ol>
+			</div>
+			<div class="col-md-2"></div>
+			<div class="roleAccount col-md-4">
+				<h2>修改角色</h2>
+				<div class="form-group">
+					<input type="text" class="form-control" v-model="updateRole" name="updateRole" placeholder="请输入角色名">
+				</div>
+				<!--<button class="btn btn-success"  @click="roleConfirm">确认修改</button>-->
+			</div>	
+			<div class="rolePart col-md-4">
+				<h2>修改角色权限</h2>
+				<div class="roleParts">
+					<div v-for="item in privilegeList">
+						<div style="margin-bottom:15px">
+							<input type="checkbox" class="registerBox" :name="item.code" :value="item.code"/>
+							<span>{{item.name}}</span>
+						</div>						
+					</div>
+				</div>
+				<button class="btn btn-success" @click="roleRegister()">确认修改</button>
+			</div>
+			<div class="col-md-2"></div>
+		</div>
+		
+		
+		
+		
+		
+	
+		
+
+
+		<div class="right col-sm-12 col-md-12 pull-right" v-show="current==2">
+			<div class="right-header">
+				<ol class="breadcrumb">
+				  <li>任务管理</li>
+				  <li>列表</li>
+				  <li>搜索</li>
+				</ol>
+			</div>
+			<div class="right-top">
+				<form class="navbar-form right-top-form" id="taskForm">
+				    <div class="form-group">
+				    	<label>任务名：</label>
+				    	<input type="text" class="form-control taskName inputsearch" name="name" placeholder="">
+				    </div>
+				    <div class="form-group">
+				    	<label>起始时间：</label>
+						<pre class="prettyprint" id="beginTime" hidden>
+							$.calendar({ format:'yyyy-MM-dd HH:mm:ss' });
+						</pre>					
+				    	<input type="text" class="form-control searchUserstartime inputsearch runcode"  name="beginTime" placeholder="">
+				    </div>
+				     <div class="form-group">
+				    	<label>终止时间：</label>
+						<pre class="prettyprint" id="endTime" hidden>
+							$.calendar({ format:'yyyy-MM-dd HH:mm:ss' });
+						</pre>
+				    	<input type="text" class="form-control searchUserendtime inputsearch runcode"  name="endTime" placeholder="">
+				    </div>
+				    <button class="btn btn-info" id="taskSearch"  v-on:click.stop.prevent="taskPage(2)"><span class="glyphicon glyphicon-search"></span></button>
+			    </form>
+			</div>
+			<div class="right-header">
+				<ol class="breadcrumb">
+				  <li>任务列表</li>
+				</ol>
+			</div>
+			<div class="right-bottom">
+
+				<button class="btn btn-success" id="add-task">任务发布</button>
+
+				<div class="table-responsive">
+					<table class="table table-bordered table-striped tableTask">
+						<thead>
+							<tr style="font-weight: bold;">
+								<td>序号</td>
+								<td>任务名称</td>
+								<td>标记图片数量</td>
+								<td>发布时间</td>	
+								<td>任务状态</td>
+								<td>执行人员</td>
+								<td>操作</td>	
+							</tr>
+						</thead>	
+						<tbody>
+							<tr v-for="(item,index) in tableTask">
+								<td>{{index+(curtask-1)*10+1}}</td>
+								<td>{{item.name}}</td>
+								<td>{{item.count}}</td>
+								<td>{{item.publishTime}}</td>
+								<td v-if="item.status==0">未领取</td>
+								<td v-else-if="item.status==1">处理中</td>
+								<td v-else-if="item.status==2">已完成</td>
+								<td>{{item.username}}</td>
+								<td>
+									<a class="taskreceive" @click="draw(item.id)" v-if="item.status==0">领取</a>
+									<a class="taskdetail" @click="taskDetail(item.id,9)">任务详情    </a>
+									<a class="taskdelete" @click="del(item.id)">删除</a>
+								</td>
+							</tr>
+						</tbody>
+					</table>						
+				</div>
+				
+				<div class="page-bar">
+				    <ul>
+				        <li v-if="curtask>1"><a v-on:click="curtask--,taskpageClick(2)">上一页</a></li>
+				        <li v-if="curtask==1"><a class="banclick">上一页</a></li>
+				        <li v-for="index in indexs(curtask,all)"  v-bind:class="{ 'active': curtask == index}">
+				            <a v-on:click="taskbtnClick(index,2)">{{ index }}</a>
+				        </li>
+				        <li v-if="curtask!=all"><a v-on:click="curtask++,taskpageClick(2)">下一页</a></li>
+				        <li v-if="curtask == all"><a class="banclick">下一页</a></li>
+				        <li><a>共<i>{{all}}</i>页</a></li>
+				    </ul>
+				</div>
+				
+				<!--<div class="page-bar">
+				    <ul>
+				        <li v-if="curtask>1"><a v-on:click="curtask--,taskpageClick()">上一页</a></li>
+				        <li v-if="curtask==1"><a class="taskbanclick">上一页</a></li>
+				        <li v-for="index in indexs"  v-bind:class="{ 'active': curtask == index}">
+				            <a v-on:click="taskbtnClick(index)">{{ index }}</a>
+				        </li>
+				        <li v-if="curtask!=alltask"><a v-on:click="curtask++,taskpageClick()">下一页</a></li>
+				        <li v-if="curtask == alltask"><a class="taskbanclick">下一页</a></li>
+				        <li><a>共<i>{{alltask}}</i>页</a></li>
+				    </ul>
+				</div>-->
+				
+			</div>
+		</div>
+		
+		
+
+		<!--任务审核-->
+		<div class="right col-sm-12 col-md-12 pull-right shenhe" v-show="current == 10">
+			<div class="right-header">
+				<ol class="breadcrumb">
+				  <li>任务管理</li>
+				  <li>审核</li>
+				  <li>搜索</li>
+				</ol>
+			</div>
+			<div class="right-top">
+				<form class="navbar-form right-top-form" id="verifyForm">
+				    <div class="form-group">
+				    	<label>任务名：</label>
+				    	<input type="text" class="form-control" name="name" placeholder="">
+				    </div>
+					<div class="form-group">
+				    	<label>执行人：</label>
+				    	<input type="text" class="form-control" name="username" placeholder="">
+				    </div>
+				    <div class="form-group">
+				    	<label>起始时间：</label>
+						<pre class="prettyprint" id="beginTime" hidden>
+							$.calendar({ format:'yyyy-MM-dd HH:mm:ss' });
+						</pre>					
+				    	<input type="text" class="form-control searchUserstartime inputsearch runcode"  name="beginTime" placeholder="">
+				    </div>
+				     <div class="form-group">
+				    	<label>终止时间：</label>
+						<pre class="prettyprint" id="endTime" hidden>
+							$.calendar({ format:'yyyy-MM-dd HH:mm:ss' });
+						</pre>
+				    	<input type="text" class="form-control searchUserendtime inputsearch runcode"  name="endTime" placeholder="">
+				    </div>
+				    <button class="btn btn-info" id="verifySerach" v-on:click.stop.prevent="verify(10)"><span class="glyphicon glyphicon-search"></span></button>
+			    </form>
+			</div>
+			<div class="right-header">
+				<ol class="breadcrumb">
+				  <li>审核列表</li>
+				</ol>
+			</div>
+			<div class="right-bottom">
+
+				<div class="table-responsive">
+					<table class="table table-bordered table-striped taskVerify">
+						<thead>
+							<tr style="font-weight: bold;">
+								<td>序号</td>
+								<td>任务名称</td>
+								<td>标记图片数量</td>
+								<td>发布时间</td>	
+								<td>任务状态</td>
+								<td>执行人员</td>
+								<td>操作</td>	
+							</tr>
+						</thead>	
+						<tbody>
+							<tr v-for="(item,index) in tableVerify">
+								<td>{{index+1+(auditCur-1)*10}}</td>
+								<td>{{item.name}}</td>
+								<td>{{item.count}}</td>
+								<td>{{item.publishTime}}</td>
+								<td v-if="item.status==2">已完成</td>
+								<td>{{item.username}}</td>
+								<td>
+									<a class="taskVerify" @click="verifyTask(item.id)">审核</a>
+								</td>
+							</tr>
+						</tbody>
+					</table>						
+				</div>
+				
+				<div class="page-bar">
+				    <ul>
+				        <li v-if="auditCur>1"><a v-on:click="auditCur--,auditPageClick(10)">上一页</a></li>
+				        <li v-if="auditCur==1"><a class="banclick">上一页</a></li>
+				        <li v-for="index in indexs(auditCur,all)"  v-bind:class="{ 'active': auditCur == index}">
+				            <a v-on:click="auditBtnClick(index,10)">{{ index }}</a>
+				        </li>
+				        <li v-if="auditCur!=all"><a v-on:click="auditCur++,auditPageClick(10)">下一页</a></li>
+				        <li v-if="auditCur == all"><a class="banclick">下一页</a></li>
+				        <li><a>共<i>{{all}}</i>页</a></li>
+				    </ul>
+				</div>
+
+				
+			</div>
+		</div>
+		
+		<!--任务详情-->
+		<div class="right col-sm-12 col-md-12 pull-right"  v-show="current==9">
+			<div class="right-header">
+				<ol class="breadcrumb">
+				  <li>任务详情</li>
+				  <li>列表</li>
+				</ol>
+			</div>
+			<div class="right-top">
+				<form class="navbar-form right-top-form" id="taskDetailForm">
+				    <div class="form-group">
+				    	<label>图片名：</label>
+				    	<input type="text" class="form-control imgname inputsearch" name="imgname" placeholder="">
+				    </div>
+					<div class="form-group">
+				    	<label>标注状态：</label>
+				    	<select name="status" class="form-control" style="width:70%;">
+							<option value="">请选择标注状态</option>
+							<option value="0">未标注</option>
+							<option value="1">进行中</option>
+							<option value="2">完成</option>
+						</select>
+				    </div>
+				    <button class="btn btn-info" id="taskDetailSerach"  v-on:click.stop.prevent="taskDetail(tid,9)"><span class="glyphicon glyphicon-search"></span></button>
+			    </form>	
+			</div>
+			<div class="right-header">
+				<ol class="breadcrumb">
+				  <li>任务详情</li>
+				</ol>
+			</div>
+			<div class="right-bottom">
+				<div class="table-responsive" style="margin:0px;">
+					<table class="table table-bordered table-striped tableTaskDetail" >
+						<thead>
+							<tr style="font-weight: bold;">
+								<td>序号</td>
+								<td>图片名</td>
+								<td>标注图片</td>
+								<td>标注状态</td>	
+							</tr>
+						</thead>	
+						<tbody>
+							<tr v-for="(item,index) in tableTaskDetail">
+								<td style="display:table-cell;vertical-align:middle">{{index+(taskDetailCur-1)*10+1}}</td>
+								<td style="display:table-cell;vertical-align:middle">{{item.imgname}}</td>
+								<td width="30%" style="display:table-cell;vertical-align:middle"><img :src=item.imgpath width="30%" @click="showPicture(item.imgpath)"/></td>
+								<td style="display:table-cell;vertical-align:middle" v-if="item.status==0">未标注</td>
+								<td style="display:table-cell;vertical-align:middle" v-else-if="item.status==1">进行中</td>
+								<td style="display:table-cell;vertical-align:middle" v-else-if="item.status==2">完成</td>
+							</tr>
+						</tbody>
+					</table>						
+				</div>
+			
+				<div class="page-bar">
+				    <ul>
+				        <li v-if="taskDetailCur>1"><a v-on:click="taskDetailCur--,taskDetailPageClick(9)">上一页</a></li>
+				        <li v-if="taskDetailCur==1"><a class="banclick">上一页</a></li>
+				        <li v-for="index in indexs(taskDetailCur,taskDetailAll)"  v-bind:class="{ 'active': taskDetailCur == index}">
+				            <a v-on:click="taskDetailBtnClick(index,9)">{{ index }}</a>
+				        </li>
+				        <li v-if="taskDetailCur!=taskDetailAll"><a v-on:click="taskDetailCur++,taskDetailPageClick(9)">下一页</a></li>
+				        <li v-if="taskDetailCur == taskDetailAll"><a class="banclick">下一页</a></li>
+				        <li><a>共<i>{{taskDetailAll}}</i>页</a></li>
+				    </ul>
+				</div>
+			</div>		
+				
+			</div>
+		</div>
+		
+		
+		<!--日志-->
+		<div class="right col-sm-12 col-md-12 pull-right" v-show="current==4">
+			<div class="right-header">
+				<ol class="breadcrumb">
+				  <li>日志管理</li>
+				  <li>操作日志</li>
+				</ol>
+			</div>
+			<div class="right-top">
+				<form class="navbar-form right-top-form">
+				    <div class="form-group">
+				    	<label>操作模块：</label>
+				    	<input type="text" class="form-control opModule inputsearch" name="opModule" placeholder="">
+				    </div>
+				    <div class="form-group">
+				    	<label>操作人员：</label>
+				    	<input type="text" class="form-control opPerson inputsearch" name="opPerson" placeholder="">
+				    </div>
+				    <div class="form-group">
+				    	<label>开始时间：</label>
+						<pre class="prettyprint" id="authorEnd" hidden>
+							$.calendar({ format:'yyyy-MM-dd HH:mm:ss' });
+						</pre>
+				    	<input type="text" name="authorStart" class="form-control authorEnd runcode" placeholder=""/>
+				    </div>
+				    <div class="form-group">
+				    	<label>结束时间：</label>
+						<pre class="prettyprint" id="authorEnd" hidden>
+							$.calendar({ format:'yyyy-MM-dd HH:mm:ss' });
+						</pre>
+				    	<input type="text" name="authorStart" class="form-control authorEnd runcode" placeholder=""/>
+				    	
+				    </div>
+				    <button class="btn btn-info"><span class="glyphicon glyphicon-search"></span></button>
+			    </form>
+			</div>
+			<div class="right-header">
+				<ol class="breadcrumb">
+				  <li>操作日志</li>
+				</ol>
+			</div>
+			<div class="right-bottom">
+				<div class="table-responsive">
+					<table class="table table-bordered table-striped">
+						<thead>
+							<tr style="font-weight: bold;">
+								<td>序号</td>
+								<td>操作模块</td>
+								<td>操作人员</td>
+								<td>操作时间</td>	
+							</tr>
+						</thead>	
+						<tbody>
+							<tr v-for="item in tableCommon">
+								<td>{{item.account}}</td>
+								<td>{{item.opmodule}}</td>
+								<td>{{item.opperson}}</td>
+								<td>{{item.optime}}</td>
+							</tr>
+						</tbody>
+					</table>						
+				</div>
+				
+			</div>
+		</div>
+		</div>
+		
+		<div class="footer">
+			Copyright © 丰华联合科技有限公司 Inc. 2017
+		</div>
+		
+		</div>
+		
+		<script src="https://cdn.bootcss.com/vue/2.4.2/vue.min.js"></script>
+		<script src="https://cdn.bootcss.com/vue-resource/1.3.0/vue-resource.min.js"></script>
+		<script src="public/javascripts/vueManagepage.js"></script>
+		<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>adminDel
+		<script>
+			function showFix(){
+				$('.coverUserFix').css('display','block');
+			}
+		</script>
+	</body>
+</html>

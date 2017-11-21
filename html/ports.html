@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>接口</title>
+		<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+		<script src="https://cdn.bootcss.com/jquery/2.2.2/jquery.min.js"></script>
+		<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+	</head>
+	<body>
+		<div class="container" style="padding: 30px;">
+
+		<span style="display: inline-block; width: 90px;height: 30px;line-height: 30px;padding-left: 5px;font-size: 18px;">选择接口 </span>
+		<select name="" id="" @change="change" v-model="posts" style="width: 300px;height: 30px;margin-bottom: 20px;">
+			<option :value="item.url" v-for="item in portsDetail">{{item.name}}</option>
+		</select>
+		
+		<div class="form-group">
+			<input type="text" class="form-control" style="width: 400px; display: inline-block;" value="" v-model="chosePost" />	
+			<button class="btn btn-success" style="margin-left: 50px;" @click="submitInfo">提交</button>
+		</div>
+		
+		<div class="form-group" style="margin-top: 30px;">
+			<label>输入参数</label>
+			  <textarea class="form-control" rows="5" v-model="inputparam"></textarea> 			
+		</div>
+		
+		<div class="form-group" style="margin-top: 30px;">
+			  <label>输出参数</label>
+			  <textarea class="form-control" rows="10" v-model="outputparam"></textarea> 
+		</div>
+		
+		
+		</div>
+		<script src="https://cdn.bootcss.com/jquery/2.2.2/jquery.min.js"></script>
+		<script src="https://cdn.bootcss.com/vue/2.4.2/vue.min.js"></script>
+		<script src="https://cdn.bootcss.com/vue-resource/1.3.0/vue-resource.min.js"></script>
+		<script type="text/javascript">
+			new Vue({
+				el : '.container',
+				data :{
+					portsDetail : [
+						{name : '用户分页' , url : 'http://192.168.3.84:8080/user/search'},
+						{name : '添加用户' , url : 'http://192.168.3.84:8080/user/add'},
+						{name : '更新用户' , url : 'http://192.168.3.84:8080/user/update'},
+						{name : '更新用户角色' , url : 'http://192.168.3.84:8080/user/updateRole'},
+						{name : '删除用户角色' , url : 'http://192.168.3.84:8080/user/del'},
+						{name : '用户角色列表' , url : 'http://192.168.3.84:8080/user/roleList'},
+						{name : '用户列表' , url : 'http://192.168.3.84:8080/user/searchALL'},
+						{name : '任务列表' , url : 'http://192.168.3.84:8080/task/list'},
+						{name : '任务发布' , url : 'http://192.168.3.84:8080/task/save'},
+						{name : '任务领取' , url : 'http://192.168.3.84:8080/task/draw'},
+						{name : '任务详情' , url : 'http://192.168.3.84:8080/taskdetail/list'},
+						{name : '删除任务' , url : 'http://192.168.3.84:8080/task/del'},
+						{name : '任务审核列表' , url : 'http://192.168.3.84:8080/task/verify'},
+						{name : '角色列表' , url : 'http://192.168.3.84:8080/group/search'},
+						{name : '添加角色' , url : 'http://192.168.3.84:8080/group/add'},
+						{name : '修改角色' , url : 'http://192.168.3.84:8080/group/update'},
+						{name : '删除角色' , url : 'http://192.168.3.84:8080/group/del'},
+						{name : '修改角色权限' , url : 'http://192.168.3.84:8080/group/updatePrivilege'},
+						{name : '权限列表' , url : 'http://192.168.3.84:8080/group/privilege'},
+						{name : '标注首页—框删除' , url : 'http://192.168.3.247:8080/taskDetail /delete'},
+						{name : '标注首页—标注完成' , url : 'http://192.168.3.247:8080/taskDetail/complete'},
+						{name : '标注首页—下拉状态选择' , url : 'http://192.168.3.247:8080/taskDetail/select'},
+						{name : '标注首页—人提交' , url : 'http://192.168.3.247:8080/person/add'},
+						{name : '标注首页—车提交' , url : 'http://192.168.3.247:8080/car/add'},
+						{name : '标记首页—物提交' , url : 'http://192.168.3.247:8080/good/add'},
+						{name : '审核驳回' , url : 'http://192.168.3.247:8080/check/reject'},
+						{name : '审核通过' , url : 'http://192.168.3.247:8080/check/pass'},
+						{name : '审核详情' , url : 'http://192.168.3.247:8080/check/details'},
+						{name : '审核上一页/下一页' , url : 'http://192.168.3.247:8080/check/page'},
+						{name : '登陆' , url : 'http://192.168.3.247:8080/login'}
+					],
+					posts : '',
+					chosePost : '',
+					inputparam : '',
+					outputparam : '',
+				},
+				mounted : function(){
+
+				},
+				methods : {
+					change : function(){
+						this.chosePost = this.posts;
+					},
+					submitInfo : function(){
+						var self = this;
+						
+						var param = JSON.parse(self.inputparam);
+						
+						$.post(self.chosePost,param,function(html){
+							
+						}); 
+						
+					}
+				}
+			})
+		</script>
+	</body>
+</html>

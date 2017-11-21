@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Demo</title>
+  	<link rel="stylesheet" href="public/stylesheets/demos.css" />
+  	<link rel="stylesheet" type="text/css" href="public/stylesheets/style.css"/>
+  	<link rel="stylesheet" type="text/css" href="public/stylesheets/main.css"/>
+  	<link rel="stylesheet" type="text/css" href="public/stylesheets/jquery.Jcrop.css"/>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+</head>
+<body class="HolyGrail" >
+	<button id="toggle" class="btn btn-info toggle" style="position:fixed;bottom:75px;left:25px;z-index:11111;">≡</button>
+	<div id="app-form">
+	<header class="top"> 
+		<img src="public/img/logo.png" />
+		<span class="nav" onclick="window.location.href = '/managepage.html?current=4'">图片库</span>
+		<span class="nav" onclick="window.location.href = '/managepage.html?current=4'">日志</span>
+		<span class="nav" onclick="window.location.href = '/managepage.html?current=2'">任务</span>
+		<span class="nav" onclick="window.location.href = '/managepage.html?current=0'">用户</span>			
+	</header>
+	<div class="HolyGrail-body" >
+		<div class="HolyGrail-container">
+			<div class="btns">
+				<button class="btn btn-success prev" id="prev" @click="switchPic('-1')">上一张</button>
+				<button class="btn btn-success next" id="next" @click="switchPic('1')">下一张</button>
+				<p style="text-align: center;font-size: 22px; line-height: 50px;font-weight: bold;color: #20B2AA;">审核{{currentPage}}/{{countPage}}张图片</p>	
+				
+			</div>
+			<div class="HolyGrail-main">
+				<main id="anno4img-container" class="HolyGrail-content" style="bottom:220px"> 
+					
+				</main>	
+				<div style="position: absolute; bottom: 0px;width: 90%;margin: 10px 5%;" id="statistic">
+					<table class="table table-bordered table-hover"  style="background: #fff;margin-bottom: 5px;"> 
+						<thead style="background: rgba(0,20,30,.1);">
+							<td></td>
+							<td>图片</td>
+							<td>人</td>
+							<td>车</td>
+							<td>物</td>
+						</thead>
+						<tr>
+							<td>今日已通过图片</td>
+							<td><span>{{checkCountVO.imgTodayPassTotal}}</span></td>
+							<td><span>{{checkCountVO.personTodayPassTotal}}</span></td>
+							<td><span>{{checkCountVO.carTodayPassTotal}}</span></td>
+							<td><span>{{checkCountVO.goodTodayPassTotal}}</span></td>
+						</tr>
+						<tr>
+							<td>累计已通过图片</td>
+							<td><span>{{checkCountVO.imgPassTotal}}</span></td>
+							<td><span>{{checkCountVO.personPassTotal}}</span></td>
+							<td><span>{{checkCountVO.carPassTotal}}</span></td>
+							<td><span>{{checkCountVO.goodPassTotal}}</span></td>
+						</tr>
+						<tr>
+							<td>今日已驳回图片</td>
+							<td><span>{{checkCountVO.imgTodayRejectTotal}}</span></td>
+							<td><span>{{checkCountVO.personTodayRejectTotal}}</span></td>
+							<td><span>{{checkCountVO.carTodayRejectTotal}}</span></td>
+							<td><span>{{checkCountVO.goodTodayRejectTotal}}</span></td>
+						</tr>
+						<tr>
+							<td>累计已驳回图片</td>
+							<td><span>{{checkCountVO.imgRejectTotal}}</span></td>
+							<td><span>{{checkCountVO.personRejectTotal}}</span></td>
+							<td><span>{{checkCountVO.carRejectTotal}}</span></td>
+							<td><span>{{checkCountVO.goodRejectTotal}}</span></td>
+						</tr>
+					</table>			
+				</div>
+			</div>
+			<!--<div class="info"></div>-->
+		</div>
+		<aside class="HolyGrail-ads"  >
+			<ul class="labels-infos">
+				<li class="labels-info " @click="changeShow('0')" :class="{'formhead' : formhead==0}">人</li>
+				<li class="labels-info label-middle" @click="changeShow('1')" :class="{'formhead' : formhead==1}">车</li>
+				<li class="labels-info" @click="changeShow('2')" :class="{'formhead' : formhead==2}">物</li>
+			</ul>
+		
+				<form id="form1" v-show="formNum==0"   method="post"/ >
+					<table class="table-bordered table">
+							<tr>
+								<td style="width: 33.3%;"><span>是否是人:</span></td>
+								<td>
+									<label>
+										<input type="radio" name="person" value="1" />是										
+									</label>
+									<label>
+										<input type="radio" name="person" value="0" />否
+									</label>
+									<label>
+										<input type="radio" name="person"value="-1" />马赛克严重的人
+									</label>
+								</td>
+						 	</tr>
+						 	<tr>
+								<td style="width: 33.3%;"><span>方位:</span></td>
+								<td>
+									<label>
+										<input type="radio" name="position" value="1" />正面										
+									</label>
+									<label>
+										<input type="radio" name="position" value="0" />背影
+									</label>
+
+								</td>
+						 	</tr>
+						 	<tr>
+								<td style="width: 33.3%;"><span>是否打电话:</span></td>
+								<td>
+									<label>
+										<input type="radio" name="phone" value="1" />是										
+									</label>
+									<label>
+										<input type="radio" name="phone" value="0" />否
+									</label>									
+								</td>
+						 	</tr>
+							<tr style="background: #efefef;"><td colspan="2">头部信息:</td></tr>
+							<tr>
+								<td><span>性别:</span></td>
+								<td>
+									
+							    	<label><input type="radio" name="sex" value="1" />男</label>
+							    	<label><input type="radio" name="sex" value="0" />女	</label>
+							    </td>
+							</tr>
+							<tr>
+								<td><span>年龄:</span></td>
+								<td>
+									<label><input type="radio" name="age" value="0" />15岁以下</label>
+							    	<label><input type="radio" name="age" value="15" />15到30岁</label>
+							    	<label><input type="radio" name="age" value="30" />30到45岁</label>
+							    	<label><input type="radio" name="age" value="45" />45到60岁</label>
+							    	<label><input type="radio" name="age" value="60" />60岁以上</label>
+								</td>
+							</tr>
+						    <tr>
+						    	<td><span>是否带帽子:</span></td>
+						    	<td><label><input type="checkbox" name="hat" value="1" />是</label></td>
+						    </tr>
+						    <tr>
+						    	<td><span>是否带头盔:</span></td>
+						    	<td><label><input type="checkbox" name="helmet" value="1" />是</label></td>
+						    </tr>
+						 	<tr style="background: #efefef;"><td colspan="2">头发信息:</td></tr>
+							<tr>
+								<td><span>发型:</span></td>
+								<td>
+									<label>
+										<input type="radio" name="hire" value="0" />秃发
+									</label>
+									<label>
+										<input type="radio" name="hire" value="1" />长发
+									</label>
+									<label>
+										<input type="radio" name="hire" value="2" />短发
+									</label>
+							    	
+							    	
+								</td>
+							</tr>
+							<tr style="background: #efefef;"><td colspan="2">其他信息:</td></tr>
+							<tr>
+						    	<td><span>是否带眼镜:</span></td>
+						    	<td><label><input type="checkbox" name="glass" value="1" />是</label></td>
+						    </tr>
+						    <tr>
+						    	<td><span>是否有胡子:</span></td>
+						    	<td><label><input type="checkbox" name="beard" value="1" />有</label></td>
+						    </tr>
+						    <tr>
+						    	<td><span>是否有围巾:</span></td>
+						    	<td><label><input type="checkbox" name="scarf" value="1" />有</label></td>
+						    </tr>
+						    <tr>
+						    	<td><span>是否戴耳机:</span></td>
+						    	<td><label><input type="checkbox" name="headset" value="1" />有</label></td>
+						    </tr>
+						    <tr style="background: #efefef;"><td colspan="2">上身:</td></tr>
+						    <tr>
+								<td><span>体型:</span></td>
+								<td>
+									<label><input type="radio" name="shape" value="high"/>偏高</label>
+							    	<label><input type="radio" name="shape" value="low"/>偏矮</label>
+							    	<label><input type="radio" name="shape" value="fat"/>偏胖</label>
+							    	<label><input type="radio" name="shape" value="thin"/>偏瘦</label>
+								</td>
+							</tr>
+							<tr>
+								<td><span>衣领类型:</span></td>
+								<td>
+									<label><input type="radio" name="collar" value="0"/>有领</label>
+							    	<label><input type="radio" name="collar" value="1"/>圆领</label>
+							    	<label><input type="radio" name="collar" value="2"/>V领</label>
+								</td>
+							</tr>
+							<tr>
+								<td><span>袖子类型:</span></td>
+								<td>
+									<label><input type="radio" name="gusset" value="0"/>长袖</label>
+							    	<label><input type="radio" name="gusset" value="1"/>短袖</label>
+							    	<label><input type="radio" name="gusset" value="2"/>无袖</label>
+								</td>
+							</tr>
+							<tr>
+								<td><span>服装类型:</span></td>
+								<td>
+									<label><input type="radio" name="shirt" value="0"/>T恤</label>
+							    	<label><input type="radio" name="shirt" value="1"/>衬衫</label>
+							    	<label><input type="radio" name="shirt" value="2"/>风衣</label>
+							    	<label><input type="radio" name="shirt" value="3"/>连衣裙</label>
+							    	<label><input type="radio" name="shirt" value="4"/>羽绒服</label>
+							    	<label><input type="radio" name="shirt" value="5"/>制服</label>
+							    	<label><input type="radio" name="shirt" value="6"/>西装</label>
+								</td>
+							</tr>
+							<tr>
+								<td><span>衣服图案:</span></td>
+								<td>
+									<label><input type="radio" name="pattern" value="0"/>条纹</label>
+							    	<label><input type="radio" name="pattern" value="1"/>格子</label>
+								</td>
+							</tr>
+							<tr>
+								<td><span>是否带手表:</span></td>
+								<td>
+									<label><input type="checkbox" name="watch" value="1"/>是</label>
+								</td>
+							</tr>
+							<tr>
+								<td><span>携带物品:</span></td>
+								<td>
+									<label><input type="checkbox" name="goods" value="pack"/>背包</label>
+							    	<label><input type="checkbox" name="goods" value="messenger"/>斜挎包</label>
+							    	<label><input type="checkbox" name="goods" value="shoulder"/>单肩包</label>
+							    	<label><input type="checkbox" name="goods" value="bike"/>自行车</label>
+							    	<label><input type="checkbox" name="goods" value="electrombile"/>电动车</label>
+							    	<label><input type="checkbox" name="goods" value="motorbike"/>摩托车</label>
+							    	<label><input type="checkbox" name="goods" value="plastic"/>塑料袋</label>
+							    	<label><input type="checkbox" name="goods" value="handpack"/>手包</label>
+							    	<label><input type="checkbox" name="goods" value="box"/>箱子</label>
+							    	<label><input type="checkbox" name="goods" value="umbrella"/>雨伞</label>
+							    	<label><input type="checkbox" name="goods" value="phone"/>手机</label>
+							    	<label><input type="checkbox" name="goods" value="pram"/>婴儿车</label>
+							    	<label><input type="checkbox" name="goods" value="pet"/>宠物</label>
+							    	<label><input type="checkbox" name="goods" value="crutch"/>拐杖</label>
+								</td>
+							</tr>
+							<tr>
+								<td><span>上衣主要颜色:</span></td>
+								<td>
+									<label><input type="radio" name="upColor" value="0"/>白</label>
+							    	<label><input type="radio" name="upColor" value="1"/>黄</label>
+							    	<label><input type="radio" name="upColor" value="2"/>蓝</label>
+							    	<label><input type="radio" name="upColor" value="3"/>绿</label>
+							    	<label><input type="radio" name="upColor" value="4"/>红</label>
+							    	<label><input type="radio" name="upColor" value="5"/>其他</label>
+								</td>
+							</tr>
+							 <tr style="background: #efefef;"><td colspan="2">下身:</td></tr>
+							 <tr>
+								<td><span>裤子类型:</span></td>
+								<td>
+									<label><input type="radio" name="trousers" value="0"/>长裤</label>
+							    	<label><input type="radio" name="trousers" value="1"/>短裤</label>
+							    	<label><input type="radio" name="trousers" value="2"/>长裙</label>
+							    	<label><input type="radio" name="trousers" value="3"/>短裙</label>
+							    	<label><input type="radio" name="trousers" value="4"/>丝袜</label>
+								</td>
+							</tr>
+							<tr>
+								<td><span>是否是牛仔:</span></td>
+								<td>
+									<label><input type="checkbox" name="cowboy"/>是</label>
+								</td>
+							</tr>
+							<tr>
+								<td><span>鞋子款式:</span></td>
+								<td>
+									<label><input type="radio" name="shoe" value="0"/>凉鞋</label>
+							    	<label><input type="radio" name="shoe" value="1"/>高跟鞋</label>
+							    	<label><input type="radio" name="shoe" value="2"/>皮鞋</label>
+							    	<label><input type="radio" name="shoe" value="3"/>运动鞋</label>
+								</td>
+							</tr>
+							<tr>
+								<td><span>步态:</span></td>
+								<td>
+									<label><input type="radio" name="walk" value="0"/>行走</label>
+							    	<label><input type="radio" name="walk" value="1"/>奔跑</label>
+							    	<label><input type="radio" name="walk" value="2"/>站立</label>
+							    	<label><input type="radio" name="walk" value="3"/>坐着</label>
+							    	<label><input type="radio" name="walk" value="4"/>骑车</label>
+								</td>
+							</tr>
+							<tr>
+								<td><span>下衣主要颜色:</span></td>
+								<td>
+									<label><input type="radio" name="downColor" value="0"/>白</label>
+							    	<label><input type="radio" name="downColor" value="1"/>黄</label>
+							    	<label><input type="radio" name="downColor" value="2"/>蓝</label>
+							    	<label><input type="radio" name="downColor" value="3"/>绿</label>
+							    	<label><input type="radio" name="downColor" value="4"/>红</label>
+							    	<label><input type="radio" name="downColor" value="5"/>其他</label>
+								</td>
+							</tr>
+							<tr>
+								<td><span>本次记录人:</span></td>
+								<td>
+									<input type="text" name="recorder" id="recorder"/>
+									<input type="hidden" name="imgId" id="imgId" value="">
+									<input type="hidden" name="markId" id="markId" value="">
+									
+									<input type="hidden" name="posX" id="posX" value=""> 
+									<input type="hidden" name="posY" id="posY" value=""> 
+									<input type="hidden" name="posW" id="posW" value=""> 
+									<input type="hidden" name="posH" id="posH" value=""> 
+								</td>
+							</tr>
+							<tr>
+								<td></td>
+								<td>
+									<button  name="" class="btn btn-success" @click="auditPass"/>通过</button>
+									<button  name="reset" class="btn btn-danger" @click="auditReject"/>驳回</button>
+								</td>
+							</tr>
+					</table>
+				</form>
+				
+				<form v-show = "formNum==1" id="form2" method="post"> 
+					<table class="table-bordered table">
+							<tr>
+								<td style="width: 33.3%;;"><span>车类型:</span></td>
+								<td>
+									<select name="models" id="">
+										<option value="">----</option>
+										<option value="bike">自行车</option>
+										<option value="motor">摩托车</option>
+										<option value="tricycle">三轮车</option>
+										<option value="car">轿车</option>
+										<option value="bigcar">大型车</option>
+										<option value="smallcar">小型车</option>
+									</select>
+								</td>
+						 	</tr>
+							
+							<tr>
+								<td style="width: 33.3%;;"><span>是否有副驾驶员:</span></td>
+								<td>
+									<select name="copilot" id="">
+										<option value="0">无</option>
+										<option value="1">有</option>
+										
+									</select>
+								</td>
+						 	</tr>
+							
+							<tr>
+								<td style="width: 33.3%;;"><span>驾驶员是否系安全带:</span></td>
+								<td>
+									<select name="belt" id="">
+										<option value="0">无</option>
+										<option value="1">有</option>
+										
+									</select>
+								</td>
+						 	</tr>
+							
+							<tr>
+								<td style="width: 33.3%;;"><span>副驾驶员是否系安全带:</span></td>
+								<td>
+									<select name="fbelt" id="">
+										<option value="0">无</option>
+										<option value="1">有</option>
+										
+									</select>
+								</td>
+						 	</tr>
+							
+							<tr>
+								<td style="width: 33.3%;;"><span>遮阳板是否放下:</span></td>
+								<td>
+									<select name="visor" id="">
+										<option value="0">无</option>
+										<option value="1">有</option>
+										
+									</select>
+								</td>
+						 	</tr>
+							
+							<tr>
+								<td style="width: 33.3%;;"><span>车标:</span></td>
+								<td>
+									<select name="carlogo" id="">
+										<option value="">----</option>
+										<option value="bsj">保时捷</option>
+										<option value="bmw">宝马</option>
+										<option value="bc">奔驰</option>
+										<option value="msld">玛莎拉蒂</option>
+										<option value="kdlk">凯迪拉克</option>
+										<option value="tsl">特斯拉</option>
+									</select>
+								</td>
+						 	</tr>
+							
+							<tr>
+								<td><span>车辆颜色:</span></td>
+								<td>	
+									<select name="carcolor" id="">
+										<option value="">--请选择--</option>
+										<option value="black">黑</option>
+										<option value="white">白</option>
+										<option value="red">红</option>
+										<option value="green">绿</option>
+										<option value="blue">蓝</option>
+										<option value="another">其他</option>
+									</select>																			
+								</td>
+							</tr>
+							
+							<tr>
+								<td><span>车牌:</span></td>
+								<td>
+							    	<input type="text" name="carcard" id="carcard"/>
+							    </td>
+							</tr>
+							
+							<tr>
+								<td ><span>年检标:</span></td>
+								<td>
+									<select name="yearmark" id="">
+										<option value="">----</option>
+										<option value="1">1</option>
+										<option value="2">2</option>
+										<option value="3">3</option>
+										<option value="4">4</option>
+									</select>
+								</td>
+						 	</tr>
+						 	
+						 	<tr>
+								<td>
+									<input type="hidden" name="imgId" id="imgId" value="">
+									<input type="hidden" name="markId" id="markId" value="">
+									<input type="hidden" name="posX" id="posX" value=""/> 
+									<input type="hidden" name="posY" id="posY" value=""> 
+									<input type="hidden" name="posW" id="posW" value=""> 
+									<input type="hidden" name="posH" id="posH" value=""> 
+								</td>
+								<td>
+									<button  name="" class="btn btn-success" @click="auditPass($event)"/>通过</button>
+									<button  name="reset" class="btn btn-danger" @click="auditReject($event)"/>驳回</button>
+								</td>
+							</tr>
+					</table>
+				</form>
+				
+				<form v-show="formNum==2" id="form3" method="post">
+					<table class="table-bordered table">
+						<tr>
+							<td style="width: 33.3%;"><span >货物:</span></td>
+							<td>
+								<select name="huowu">
+									<option value="">----</option>
+									<option value="1">1</option>
+									<option value="2">2</option>
+									<option value="3">3</option>
+									<option value="4">4</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td ><span>重量:</span></td>
+							<td>
+								<select name="weight">
+									<option value="">----</option>
+									<option value="1">1</option>
+									<option value="2">2</option>
+									<option value="3">3</option>
+									<option value="4">4</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td ><span>装运货车:</span></td>
+							<td>
+								<select name="huoche">
+									<option value="">----</option>
+									<option value="1">1</option>
+									<option value="2">2</option>
+									<option value="3">3</option>
+									<option value="4">4</option>
+								</select>
+							</td>
+						</tr>	
+						<tr>
+							<td>
+								<input type="hidden" name="imgId" id="imgId" value="">
+								<input type="hidden" name="markId" id="markId" value="">
+								<input type="hidden" name="posX" id="posX" value=""> 
+								<input type="hidden" name="posY" id="posY" value=""> 
+								<input type="hidden" name="posW" id="posW" value=""> 
+								<input type="hidden" name="posH" id="posH" value=""> 
+							</td>
+							<td>
+								<button  name="" class="btn btn-success" @click="auditPass($event)"/>通过</button>
+									<button  name="reset" class="btn btn-danger" @click="auditReject($event)"/>驳回</button>
+							</td>
+						</tr>
+					</table>
+				</form>	
+		</aside>
+	</div>
+	<footer class="down">Copyright © 丰华联合科技有限公司 Inc. 2017</footer>
+	</div>
+<script src="https://cdn.bootcss.com/vue/2.4.2/vue.min.js"></script>
+<script src="https://cdn.bootcss.com/vue-resource/1.3.0/vue-resource.min.js"></script>
+<script src="https://cdn.bootcss.com/jquery/1.3.2/jquery.min.js"></script>
+<script src="public/javascripts/vueAudit.js"></script>
+<script>
+	$('form input').attr('disabled','true');
+	$('form select').attr('disabled','true');
+	$('#toggle').toggle(
+		function(){
+			$('#statistic').css('display','none');
+			$('#anno4img-container').css('bottom','0px');
+		},
+		function(){
+			$('#statistic').css('display','block');
+			$('#anno4img-container').css('bottom','220px');
+		}
+	)
+	
+</script>
+</body>
+</html>
